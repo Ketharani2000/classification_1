@@ -25,3 +25,77 @@ learning_rate = 0.1
 iterations = 10
 loss_history_gradient = []
 loss_history_Newton=[]
+
+
+# Perform batch gradient descent
+for i in range(iterations):
+    # Calculate predicted probabilities using the current weights
+    y_pred = sigmoid(np.dot(X, W))
+
+    # Calculate the gradient of the loss function
+    gradient = np.dot(X.T, y_pred - y) / len(y)
+
+    # Update the weights using gradient descent
+    W -= learning_rate * gradient
+
+    # Calculate the loss and append to history
+    loss = np.mean(log_loss(y, y_pred))
+    loss_history_gradient.append(loss)
+
+# Plot the loss with respect to the number of iterations
+plt.plot(range(iterations), loss_history_gradient, marker='o')
+plt.xlabel('Iteration')
+plt.ylabel('Loss')
+plt.title('Loss vs. Iteration')
+plt.grid(True)
+plt.show()
+
+# perform Newton's method
+one_matrix = np.ones((X.shape[0], 1))
+y=y.reshape(len(y),1)
+W = np . zeros (X . shape [1])
+W=W.reshape(3,1)
+
+for i in range ( iterations ):
+    y_pred = sigmoid ( np. dot (X , W))
+
+    s = ( (y_pred - y) * (1 - y_pred - y))
+    s = s.reshape(len(s))
+    S = np.diag(s)
+
+    mulfact_a = X.T @ S @ X
+    mulfact_a = mulfact_a / y . size
+    mulfact_a = np.linalg.inv(mulfact_a)
+
+    loss = log_loss ( y , y_pred )
+    loss_history_Newton . append ( np. sum ( np.mean(loss) ))
+
+    residual = y_pred - y
+    residual = residual.reshape(len(residual))
+    diagonal_residual = np. diag ( residual )
+
+    mulfact_b= one_matrix. T @ diagonal_residual@ X
+    mulfact_b = mulfact_b.T / y . size
+
+    W -= mulfact_a @ mulfact_b
+
+
+ # Plot the loss function over iterations
+plt. figure ()
+plt. plot ( np. arange ( iterations ), loss_history_Newton,marker='o' )
+plt. title ('Logistic Regression Loss per Iteration')
+plt. xlabel ('Iterations')
+plt. ylabel ('Loss')
+plt. show ()
+
+# Plot the loss with respect to the number of iterations for both methods
+plt.plot(range(iterations), loss_history_gradient, marker='o', label='Gradient Descent')
+plt.plot(range(iterations), loss_history_Newton, marker='o', label='Newton\'s Method')
+plt.xlabel('Iteration')
+plt.ylabel('Loss')
+plt.title('Loss vs. Iteration (Gradient Descent vs. Newton\'s Method)')
+plt.grid(True)
+plt.legend()
+plt.show()
+
+
